@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor a JSON</title>
+    <style>
+/* Estilo global */
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #556270;
+    margin-bottom: 20px;
+}
+
+/* Formulario */
+form {
+    background-color: #ffffff;
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e0e0e0;
+}
+
+/* Etiquetas */
+label {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 5px;
+    display: block;
+    color: #3d3d3d;
+}
+
+/* Inputs y textarea */
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: #fdfdfd;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #82b1ff;
+    background-color: #f5faff;
+    outline: none;
+}
+
+/* Botón de envío */
+button {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #82b1ff;
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #0054dc;
+    transform: scale(1.02);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* Área de resultados */
+.output {
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    color: #333;
+}
+
+.output h2 {
+    font-size: 1.2rem;
+    color: #556270;
+    margin-bottom: 10px;
+}
+
+.output pre {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: 8px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95rem;
+    color: #444;
+    overflow-x: auto;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    form {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+
+<h1>Conversor de Datos a JSON</h1>
+<form id="dataForm">
+    <label for="id">ID:</label>
+    <input list="idOpciones" id="id" name="id" required>
+    <datalist id="idOpciones">
+        <option value="nacional-semanal">
+        <option value="internacional-semanal">
+        <option value="nacional">
+        <option value="internacional">
+        <option value="Deportes">
+        <option value="La-Mirada">
+        <option value="Locales">
+        <option value="En-la-zona">
+        <option value="Tiempo">
+        <option value="Cultura">
+        <option value="Entrevistas">
+        <option value="Mucho-mas">
+        <option value="Objetibum">
+        <option value="Redes-Sociales">
+    </datalist>
+
+    <label for="titulo">Título:</label>
+    <input type="text" id="titulo" name="titulo" required>
+
+    <label for="imagen">URL de la Imagen:</label>
+    <input type="text" id="imagen" name="imagen" required>
+
+    <label for="autor">Autor:</label>
+    <input list="idAutores" id="autor" name="autor" required>
+    <datalist id="idAutores">
+        <option value="Jesús Inarejos Gómez">
+        <option value="Tiago Hernández">
+        <option value="Alejandro Sepúlveda">
+    </datalist>
+
+    <label for="contenido">Contenido (separa párrafos con una nueva línea):</label>
+    <textarea id="contenido" name="contenido" required></textarea>
+
+    <label for="categoria">Categoría:</label>
+    <input type="text" id="categoria" list="categoriaList" name="categoria" required>
+    <datalist id="categoriaList">
+        <option value="Política">
+        <option value="Economía">
+        <option value="Deportes">
+        <option value="Sucesos">
+        <option value="Cultura">
+        <option value="Meteorología">
+        <option value="Trabajo">
+        <option value="Tecnología">
+        <option value="Ciberseguridad">
+    </datalist>
+
+    <label for="subcategoria">Subcategoría:</label>
+    <input type="text" id="subcategoria" list="subList" name="subcategoria" required>
+    <datalist id="subList">
+        <option value="Nacional">
+        <option value="Internacional">
+        <option value="Local">
+    </datalist>
+
+    <label for="ubicacion">Ubicación:</label>
+    <input type="text" id="ubicacion" name="ubicacion" required>
+
+    <label for="fecha">Fecha:</label>
+    <input type="date" id="fecha" name="fecha" required>
+
+    <button type="button" onclick="convertToJson()">Convertir a JSON</button>
+</form>
+
+<div class="output" id="jsonOutput">
+    <h2>Resultado JSON:</h2>
+    <pre id="output"></pre>
+</div>
+
+<script>
+function convertToJson() {
+    const form = document.getElementById('dataForm');
+    const contenido = document.getElementById('contenido').value.split('\n').filter(p => p.trim() !== '');
+
+    const jsonData = {
+        id: form.id.value,
+        titulo: form.titulo.value,
+        imagen: form.imagen.value,
+        autor: form.autor.value,
+        contenido: contenido,
+        categoria: form.categoria.value,
+        subcategoria: form.subcategoria.value,
+        ubicacion: form.ubicacion.value,
+        fecha: form.fecha.value
+    };
+
+    // Mostrar el JSON generado en el área de resultados
+    document.getElementById('output').textContent = JSON.stringify(jsonData, null, 4);
+}
+</script>
+
+</body>
+</html>
